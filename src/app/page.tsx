@@ -40,7 +40,7 @@ export default async function Home({ searchParams }: HomeProps) {
     loadError =
       err instanceof Error
         ? err.message
-        : "데이터베이스에서 시나리오를 불러오지 못했습니다. Vercel의 DATABASE_URL과 Neon 연결을 확인하세요.";
+        : "데이터베이스에서 시나리오를 불러오지 못했습니다. Vercel의 NEW_DATABASE_URL과 Neon 연결을 확인하세요.";
   }
 
   return (
@@ -60,7 +60,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <p className="font-medium text-red-800 dark:text-red-200">DB 연결 오류</p>
           <p className="mt-2 whitespace-pre-wrap text-sm text-red-700/90 dark:text-red-300/90">{loadError}</p>
           <p className="mt-4 text-xs text-red-600/80 dark:text-red-400/80">
-            Vercel → Settings → Environment Variables에 Production용 <code className="rounded bg-red-100 px-1 dark:bg-red-900/60">DATABASE_URL</code>이
+            Vercel → Settings → Environment Variables에 Production용 <code className="rounded bg-red-100 px-1 dark:bg-red-900/60">NEW_DATABASE_URL</code>이
             있는지 확인하세요. Neon 풀러 URL 사용 시 일부 환경에서는 연결 문자열에서{" "}
             <code className="rounded bg-red-100 px-1 dark:bg-red-900/60">channel_binding=require</code>를 제거해야 할 수 있습니다.
           </p>
@@ -70,7 +70,7 @@ export default async function Home({ searchParams }: HomeProps) {
           <p className="text-zinc-600 dark:text-zinc-400">
             {query ? "검색 결과가 없습니다." : "아직 저장된 시나리오가 없습니다."}
           </p>
-          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">Neon의 kimpd_scripts 테이블과 DATABASE_URL을 확인해 주세요.</p>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-500">Neon의 kimpd_scripts 테이블과 NEW_DATABASE_URL을 확인해 주세요.</p>
         </div>
       ) : (
         <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

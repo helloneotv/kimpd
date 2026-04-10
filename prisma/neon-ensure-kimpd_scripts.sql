@@ -1,4 +1,4 @@
--- Vercel의 DATABASE_URL과 동일한 Neon 브랜치에서 실행하세요.
+-- Vercel의 NEW_DATABASE_URL과 동일한 Neon 브랜치에서 실행하세요.
 -- 테이블 존재 확인:
 --   SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname = 'public' AND tablename = 'kimpd_scripts';
 
