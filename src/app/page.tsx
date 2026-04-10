@@ -34,7 +34,6 @@ export default async function Home({ searchParams }: HomeProps) {
           }
         : undefined,
       orderBy: { created_at: "desc" },
-      take: 100,
     });
   } catch (err) {
     console.error("[KIMPD] kimpd_scripts 조회 실패:", err);

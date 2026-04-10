@@ -19,7 +19,6 @@ export async function GET(request: Request) {
         }
       : undefined,
     orderBy: { created_at: "desc" },
-    take: 100,
   });
 
   const body = rows.map((row) => ({
