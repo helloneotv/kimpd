@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const runtime = "nodejs";
 
 type HomeProps = {
   searchParams: Promise<{ q?: string }>;
@@ -19,18 +20,29 @@ export default async function Home({ searchParams }: HomeProps) {
   const { q } = await searchParams;
   const query = (q ?? "").trim();
 
-  const scripts = await prisma.kimpdScript.findMany({
-    where: query
-      ? {
-          title: {
-            contains: query,
-            mode: "insensitive",
-          },
-        }
-      : undefined,
-    orderBy: { created_at: "desc" },
-    take: 100,
-  });
+  let scripts: Awaited<ReturnType<typeof prisma.kimpdScript.findMany>> = [];
+  let loadError: string | null = null;
+
+  try {
+    scripts = await prisma.kimpdScript.findMany({
+      where: query
+        ? {
+            title: {
+              contains: query,
+              mode: "insensitive",
+            },
+          }
+        : undefined,
+      orderBy: { created_at: "desc" },
+      take: 100,
+    });
+  } catch (err) {
+    console.error("[KIMPD] kimpd_scripts 조회 실패:", err);
+    loadError =
+      err instanceof Error
+        ? err.message
+        : "데이터베이스에서 시나리오를 불러오지 못했습니다. Vercel의 DATABASE_URL과 Neon 연결을 확인하세요.";
+  }
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
@@ -44,7 +56,17 @@ export default async function Home({ searchParams }: HomeProps) {
         <SearchBar defaultQuery={query} />
       </div>
 
-      {scripts.length === 0 ? (
+      {loadError ? (
+        <div className="rounded-2xl border border-red-200 bg-red-50 px-6 py-8 dark:border-red-900/50 dark:bg-red-950/40">
+          <p className="font-medium text-red-800 dark:text-red-200">DB 연결 오류</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-red-700/90 dark:text-red-300/90">{loadError}</p>
+          <p className="mt-4 text-xs text-red-600/80 dark:text-red-400/80">
+            Vercel → Settings → Environment Variables에 Production용 <code className="rounded bg-red-100 px-1 dark:bg-red-900/60">DATABASE_URL</code>이
+            있는지 확인하세요. Neon 풀러 URL 사용 시 일부 환경에서는 연결 문자열에서{" "}
+            <code className="rounded bg-red-100 px-1 dark:bg-red-900/60">channel_binding=require</code>를 제거해야 할 수 있습니다.
+          </p>
+        </div>
+      ) : scripts.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/80 px-8 py-16 text-center dark:border-zinc-700 dark:bg-zinc-900/40">
           <p className="text-zinc-600 dark:text-zinc-400">
             {query ? "검색 결과가 없습니다." : "아직 저장된 시나리오가 없습니다."}
