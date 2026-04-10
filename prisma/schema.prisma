@@ -1,0 +1,18 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model KimpdScript {
+  id         BigInt   @id @default(autoincrement())
+  title      String   @map("title")
+  video_id   String   @map("video_id")
+  scenario   String   @map("scenario")
+  created_at DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@map("kimpd_scripts")
+}
